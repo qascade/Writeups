@@ -1,4 +1,5 @@
 #BLUE(Windows)
+
 First we will enumerate this machine. This is a windows machine with SMB.
 
 I used nmap to scan the vulnerablities.
